@@ -1,0 +1,9 @@
+{
+  "url":  "String",
+  "name": "String",
+  "description": "String",
+  "reputations": "Number",
+  "peopleReached": "Number",
+  "location": "String",
+  
+}
