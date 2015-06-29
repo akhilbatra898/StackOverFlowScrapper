@@ -1,0 +1,13 @@
+{
+  "name": "letshire",
+  "main": "server.js",
+  "version": "0.0.1",
+  "description": "Scrape the web.",
+  "author": "Abhimanyu",
+  "dependencies": {
+    "express": "latest",
+    "mongoose": "latest",
+    "request": "latest",
+    "cheerio": "latest"
+  }
+}
