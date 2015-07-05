@@ -1,4 +1,4 @@
-var request = require('request');
+var request = require('sync-request');
 var cheerio = require('cheerio');
 var exports = module.exports = {};
 
@@ -15,6 +15,7 @@ exports.profile = function($){
   var profileViews = parseInt($('.icon-eye').parent().text().replace(/[^0-9]/g,""));
   var reputation = parseInt($('.reputation span').parent().text().replace(/[^0-9]/g,""));
   var communities = getCommunities($('.additional-links .favicon-stackexchange').parent().attr('href'));
+  var activityData = getActivity($('.avatar a').attr('href')+"?tab=topactivity");
 
   console.log("name:"+name);
   console.log("Description:"+description);
@@ -24,20 +25,20 @@ exports.profile = function($){
   console.log("Profile Views:"+profileViews);
   console.log("Reputation:"+reputation);
   console.log(communities);
+  console.log(activityData);
 }
 
 
 var getCommunities = function(url){
    url = url;
-   //console.log(url);
-   //var communities = [];
-   request(url+"?tab=accounts", function(error, response, html){
+   console.log(url);
+   var communities = [];
+   var html = request("GET",url+"?tab=accounts").getBody();
       console.log(url+"hello");
-      //if(error) throw error;
-      //var $ = cheerio.load(html);
-      /*$('.account-container').each(function(i, curr){
+      var $ = cheerio.load(html);
+      $('.account-container').each(function(i, curr){
          var community = {}
-	 var name = $(this).find('h2 a').text().trim();
+	 var name = $(this).find('h2 a').text().replace(/[^a-zA-Z ]/g,"").trim();
 	 console.log("community:"+name);
 	 var reputation = parseInt($(this).find('.account-number').eq(0).text().replace(/[^0-9]/g,""));
 	 var badges = {"gold":0,"silver":0,"bronze":0};
@@ -52,7 +53,30 @@ var getCommunities = function(url){
 	 community["badges"] = badges;
 	 communities.push(community);
 	 console.log(communities);
-	 });*/
-   });
-   //return communities;
+	 });
+      return communities;
+   }
+
+
+var getActivity = function(url){
+      html = request("GET",url).getBody();
+      $ = cheerio.load(html);
+      var activities = {}
+      var flagget = $('.icon-helpful-flags').parent().text().replace(/[^0-9]/g,"");
+      if(flagget)
+	  activities.usefulFlags = $('.icon-helpful-flags').parent().text().replace(/[^0-9]/g,"");
+      else
+	  activities.usefulFlags = 0;
+      votedom = $('.votes-cast-stats tr');
+      if(votedom){
+	  activities.upvotes = parseInt(votedom.eq(1).find('td').first().text());
+	  activities.downvotes = parseInt(votedom.eq(2).find('td').first().text())
+      }
+      else{
+	  activities.upvotes = 0;
+	  activities.downvotes = 0;
+      }
+      return activities;
 }
+
+
