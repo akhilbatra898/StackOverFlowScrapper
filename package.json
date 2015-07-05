@@ -8,6 +8,7 @@
     "express": "latest",
     "mongoose": "latest",
     "request": "latest",
-    "cheerio": "latest"
+    "cheerio": "latest",
+    "sync-request": "latest"
   }
 }
